@@ -2,6 +2,17 @@
 # MIT License. See license.txt
 
 from __future__ import unicode_literals, print_function
+import frappe
+from frappe.translate import get_user_lang
+
+
+def is_rtl(lang=None) :
+	local_lang = get_user_lang(frappe.session.user)
+	print("----------+++", local_lang, "+++----------")
+	# print("----------+++", frappe.local.lang, "+++----------")
+	return local_lang in ["ar", "he", "fa"] or local_lang == lang
+
+
 
 no_cache = 1
 base_template_path = "templates/www/app.html"
@@ -43,7 +54,7 @@ def get_context(context):
 		"no_cache": 1,
 		"build_version": frappe.utils.get_build_version(),
 		"include_js": hooks["app_include_js"],
-		"include_css": hooks["app_include_css"],
+		"include_css":  hooks["app_include_rtl_css"] if is_rtl() else hooks["app_include_css"],
 		"sounds": hooks["sounds"],
 		"boot": boot if context.get("for_mobile") else boot_json,
 		"desk_theme": desk_theme or "Light",

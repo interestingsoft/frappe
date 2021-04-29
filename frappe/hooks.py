@@ -41,6 +41,13 @@ app_include_css = [
 	"/assets/css/report.min.css",
 ]
 
+
+app_include_rtl_css = [
+	"/assets/css/frappe-rtl.css",
+	"/assets/css/rtl/desk-rtl.min.css",
+	"/assets/css/rtl/report-rtl.min.css"
+]
+
 doctype_js = {
 	"Web Page": "public/js/frappe/utils/web_template.js",
 	"Website Settings": "public/js/frappe/utils/web_template.js"

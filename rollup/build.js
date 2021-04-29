@@ -66,7 +66,7 @@ function build_assets_for_app(app) {
 	return build_assets(app)
 }
 
-function build_from_(options) {
+function build_from_(options ,app=null) {
 	const promises = options.map(({ inputOptions, outputOptions, output_file}) => {
 		return build(inputOptions, outputOptions)
 			.then(() => {
@@ -77,8 +77,22 @@ function build_from_(options) {
 	const start = Date.now();
 	return Promise.all(promises)
 		.then(() => {
-			const time = Date.now() - start;
-			log(chalk.green(`✨  Done in ${time / 1000}s`));
+			//const time = Date.now() - start;
+			//log(chalk.green(`✨  Done in ${time / 1000}s`));
+			const file_path = path.resolve(assets_path, 'css/');
+			let ltr_file_name = [];
+			if (app == "frappe"){
+				ltr_file_name = ["desk.min.css", "report.min.css"];
+			}
+			else {
+				ltr_file_name = [app + ".css"];
+			}
+			create_rtl_assets(file_path, ltr_file_name);
+
+			setTimeout(() => {
+				const time = Date.now() - start;
+				log(chalk.green(`✨  Done in ${time / 1000}s`));
+			}, 1000);
 		});
 }
 
@@ -86,7 +100,7 @@ function build_assets(app) {
 	const options = get_options_for(app);
 	if (!options.length) return Promise.resolve();
 	log(chalk.yellow(`\nBuilding ${app} assets...\n`));
-	return build_from_(options);
+	return build_from_(options, app);
 }
 
 function build_files(files, app="frappe") {
@@ -176,4 +190,24 @@ function ensure_js_css_dirs() {
 function show_production_message() {
 	const production = process.env.FRAPPE_ENV === 'production';
 	log(chalk.yellow(`${production ? 'Production' : 'Development'} mode`));
+}
+
+
+
+function create_rtl_assets(file_path, ltr_file_name) {
+	const fs = require('fs');
+	const rtlcss = require('rtlcss');
+
+	for (let i of ltr_file_name) {
+		// console.log(file_path);
+		const ltr_css = fs.readFileSync(path.resolve(file_path, i), 'utf8');
+		const rtl_css = rtlcss.process(ltr_css);
+		const rtl_file_name = i.substring(0, i.indexOf(".")) + "-rtl" + i.substring(i.indexOf("."));
+		fs.writeFile(path.resolve(file_path, rtl_file_name), rtl_css, function(err) {
+			if(err) {
+				return console.log(err);
+			}
+			log(`${chalk.green('✔')} Built css/${rtl_file_name}`);
+		});
+	}
 }
