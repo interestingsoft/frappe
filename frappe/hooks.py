@@ -44,8 +44,8 @@ app_include_css = [
 
 app_include_rtl_css = [
 	"/assets/css/frappe-rtl.css",
-	"/assets/css/rtl/desk-rtl.min.css",
-	"/assets/css/rtl/report-rtl.min.css"
+	"/assets/css/desk-rtl.min.css",
+	"/assets/css/report-rtl.min.css"
 ]
 
 doctype_js = {
